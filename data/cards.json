@@ -1,0 +1,38 @@
+[
+  {
+    "id": "card-monitoring-01",
+    "title": "실시간 이해 점검",
+    "category": "monitoring",
+    "phase": "mid",
+    "agencyTarget": "teacher",
+    "riskTags": ["overload"],
+    "summary": "중간 이해 수준을 빠르게 확인하는 체크 카드"
+  },
+  {
+    "id": "card-ai-dialogue-01",
+    "title": "AI 응답 비교와 비판",
+    "category": "critical-ai",
+    "phase": "activity",
+    "agencyTarget": "student",
+    "riskTags": ["hallucination", "automation"],
+    "summary": "복수의 AI 응답을 비교해 비판적으로 읽는 활동 카드"
+  },
+  {
+    "id": "card-collaboration-01",
+    "title": "소집단 협업 설계",
+    "category": "engagement",
+    "phase": "activity",
+    "agencyTarget": "group",
+    "riskTags": [],
+    "summary": "역할 분담과 상호 검토를 촉진하는 협업 카드"
+  },
+  {
+    "id": "card-reflection-01",
+    "title": "AI 활용 성찰",
+    "category": "reflection",
+    "phase": "closing",
+    "agencyTarget": "student",
+    "riskTags": ["dependency"],
+    "summary": "AI 사용의 장점과 한계를 성찰하는 마무리 카드"
+  }
+]

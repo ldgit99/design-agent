@@ -1,0 +1,13 @@
+.next/
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+*.log
+.env
+.env.local
+.vercel
+dist/
+build/
+tsconfig.tsbuildinfo
+Harness-Engineering/
