@@ -11,3 +11,5 @@ dist/
 build/
 tsconfig.tsbuildinfo
 Harness-Engineering/
+
+.vercel
