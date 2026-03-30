@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "outputDirectory": ".next",
+  "framework": "nextjs",
   "functions": {
     "api/**/*.py": {
       "excludeFiles": "{.git/**,.next/**,node_modules/**,Harness-Engineering/**}"
