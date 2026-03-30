@@ -1,0 +1,9 @@
+{
+  "displayName": "Design Agent",
+  "description": "협력적 수업설계와 시나리오 생성을 지원하는 lesson design 에이전트",
+  "type": "web",
+  "category": "instructional-design",
+  "tags": ["design", "lesson", "curriculum", "nextjs"],
+  "launchUrl": "https://design-agent-xi.vercel.app/",
+  "disableAutoStart": true
+}

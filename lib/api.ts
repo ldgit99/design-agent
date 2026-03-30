@@ -34,7 +34,7 @@ export type LessonDraftResponse = {
 };
 
 export async function createDraftPlan(payload: LessonDraftRequest): Promise<LessonDraftResponse> {
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
   const response = await fetch(`${baseUrl}/api/lesson/draft`, {
     method: "POST",
     headers: {
