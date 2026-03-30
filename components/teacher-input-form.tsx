@@ -75,20 +75,20 @@ export function TeacherInputForm() {
               label="수업 제목"
               value={form.title}
               onChange={(value) => setForm((prev) => ({ ...prev, title: value }))}
-              placeholder="예: 생성형 AI 활용 교육 현황 및 교수 경험 분석"
+              placeholder="예: 중학교 2학년 국어, 생성형 AI로 기사문 요약과 비교 읽기"
             />
             <div className="triple-grid">
               <Field
                 label="교과"
                 value={form.subject}
                 onChange={(value) => setForm((prev) => ({ ...prev, subject: value }))}
-                placeholder="예: 교육학"
+                placeholder="예: 국어"
               />
               <Field
                 label="학년 또는 대상"
                 value={form.gradeLevel}
                 onChange={(value) => setForm((prev) => ({ ...prev, gradeLevel: value }))}
-                placeholder="예: 예비교사"
+                placeholder="예: 중학교 2학년"
               />
               <Field
                 label="차시 시간"
@@ -104,13 +104,13 @@ export function TeacherInputForm() {
               label="교사 프롬프트"
               value={form.teacherPrompt}
               onChange={(value) => setForm((prev) => ({ ...prev, teacherPrompt: value }))}
-              placeholder="수업 목표, 활동 의도, 생성형 AI를 어디까지 활용할지 구체적으로 입력합니다."
+              placeholder="학생들이 기사문의 핵심 내용을 파악하고, 생성형 AI가 만든 요약과 직접 쓴 요약을 비교해 차이를 설명하도록 하는 수업을 만들고 싶습니다. AI는 초안 비교용으로만 사용하고 최종 판단은 학생이 하게 하고 싶습니다."
             />
             <TextArea
               label="제약 조건"
               value={form.constraints}
               onChange={(value) => setForm((prev) => ({ ...prev, constraints: value }))}
-              placeholder="시간, 도구, 평가 방식, 안전성 또는 윤리 조건을 적습니다."
+              placeholder="45분 수업, 4인 모둠 활동, 학교 계정으로만 AI 사용, 개인정보 입력 금지, 형성평가 중심으로 진행합니다."
             />
           </div>
 
