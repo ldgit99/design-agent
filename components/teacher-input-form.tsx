@@ -1,7 +1,7 @@
 "use client";
 
-import type { CSSProperties, FormEvent, ReactNode } from "react";
-import { useState } from "react";
+import type { FormEvent } from "react";
+import { useMemo, useState } from "react";
 import {
   createDraftPlan,
   type LessonDraftRequest,
@@ -19,7 +19,7 @@ const defaultForm: LessonDraftRequest = {
 
 const quickNotes = [
   "교사의 최종 승인권을 유지합니다.",
-  "카드 추천 이유와 제외 이유를 함께 남깁니다.",
+  "추천 카드와 검토 의견을 함께 보여줍니다.",
   "AI 활용은 목표를 보조하는 범위로 제한합니다.",
 ];
 
@@ -43,6 +43,11 @@ export function TeacherInputForm() {
       setIsLoading(false);
     }
   }
+
+  const intentEntries = useMemo(
+    () => (result ? Object.entries(result.intentProfile) : []),
+    [result],
+  );
 
   return (
     <section className="workspace-grid">
@@ -129,29 +134,106 @@ export function TeacherInputForm() {
           </div>
           <h2>응답 보드</h2>
           <p className="panel-text">
-            결과를 해석하기 쉬운 카드 묶음으로 나눠 보여줍니다. 이후 단계에서는 여기서 카드
-            선택 수정과 루브릭 비교까지 확장할 수 있습니다.
+            결과를 읽기 쉬운 카드 레이아웃으로 나눠 보여줍니다. 다음 단계에서는 여기서 직접
+            카드 교체와 시나리오 수정을 지원할 수 있습니다.
           </p>
 
-          {error ? <ResultBox title="오류" tone="warn">{error}</ResultBox> : null}
+          {error ? <MessageBox title="오류" tone="warn" body={error} /> : null}
 
           {result ? (
             <div className="result-grid">
-              <ResultBox title="의도 프로필">
-                <pre style={preStyle}>{JSON.stringify(result.intentProfile, null, 2)}</pre>
-              </ResultBox>
-              <ResultBox title="추천 카드">
-                <pre style={preStyle}>{JSON.stringify(result.selectedCards, null, 2)}</pre>
-              </ResultBox>
-              <ResultBox title="시나리오 블록">
-                <pre style={preStyle}>{JSON.stringify(result.scenarioBlocks, null, 2)}</pre>
-              </ResultBox>
-              <ResultBox title="루브릭 차원">
-                <pre style={preStyle}>{JSON.stringify(result.rubricDimensions, null, 2)}</pre>
-              </ResultBox>
-              <ResultBox title="검토 의견">
-                <pre style={preStyle}>{JSON.stringify(result.reviewItems, null, 2)}</pre>
-              </ResultBox>
+              <section className="result-box">
+                <div className="result-box-head">
+                  <h3>의도 프로필</h3>
+                </div>
+                <div className="kv-grid">
+                  {intentEntries.map(([key, value]) => (
+                    <div className="kv-card" key={key}>
+                      <p className="kv-key">{formatKey(key)}</p>
+                      <strong className="kv-value">{formatValue(value)}</strong>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              <section className="result-box">
+                <div className="result-box-head">
+                  <h3>추천 카드</h3>
+                </div>
+                <div className="mini-card-grid">
+                  {result.selectedCards.map((card, index) => (
+                    <article className="mini-card" key={String(card.id ?? index)}>
+                      <div className="mini-card-top">
+                        <span className="mini-badge">{String(card.category ?? "card")}</span>
+                        <span className="mini-index">{index + 1}</span>
+                      </div>
+                      <strong>{formatValue(card.title)}</strong>
+                      <p>{formatValue(card.summary ?? card.phase ?? "")}</p>
+                    </article>
+                  ))}
+                </div>
+              </section>
+
+              <section className="result-box">
+                <div className="result-box-head">
+                  <h3>시나리오 블록</h3>
+                </div>
+                <div className="timeline">
+                  {result.scenarioBlocks.map((block, index) => (
+                    <article className="timeline-card" key={`${block.phase}-${index}`}>
+                      <div className="timeline-head">
+                        <div>
+                          <p className="timeline-phase">{block.phase}</p>
+                          <strong>{block.durationMinutes}분</strong>
+                        </div>
+                        <span className="mini-badge">{index + 1} step</span>
+                      </div>
+                      <dl className="timeline-meta">
+                        <div>
+                          <dt>교사</dt>
+                          <dd>{block.teacherActions}</dd>
+                        </div>
+                        <div>
+                          <dt>학생</dt>
+                          <dd>{block.studentActions}</dd>
+                        </div>
+                        <div>
+                          <dt>AI</dt>
+                          <dd>{block.aiActions}</dd>
+                        </div>
+                      </dl>
+                    </article>
+                  ))}
+                </div>
+              </section>
+
+              <section className="result-box">
+                <div className="result-box-head">
+                  <h3>루브릭 차원</h3>
+                </div>
+                <div className="pill-list">
+                  {result.rubricDimensions.map((item) => (
+                    <article className="pill-card" key={item.name}>
+                      <strong>{item.name}</strong>
+                      <p>{item.descriptor}</p>
+                    </article>
+                  ))}
+                </div>
+              </section>
+
+              <section className="result-box">
+                <div className="result-box-head">
+                  <h3>검토 의견</h3>
+                </div>
+                <div className="review-list">
+                  {result.reviewItems.map((item, index) => (
+                    <article className="review-card" key={`${item.reviewer}-${index}`}>
+                      <p className="reviewer-name">{item.reviewer}</p>
+                      <p className="review-summary">{item.summary}</p>
+                    </article>
+                  ))}
+                </div>
+              </section>
             </div>
           ) : (
             <div className="empty-state">
@@ -168,22 +250,13 @@ export function TeacherInputForm() {
   );
 }
 
-const preStyle: CSSProperties = {
-  margin: 0,
-  whiteSpace: "pre-wrap",
-  wordBreak: "break-word",
-  fontSize: 12,
-  lineHeight: 1.6,
-  color: "var(--ink)",
-};
-
-function ResultBox({
+function MessageBox({
   title,
-  children,
+  body,
   tone = "default",
 }: {
   title: string;
-  children: ReactNode;
+  body: string;
   tone?: "default" | "warn";
 }) {
   return (
@@ -191,9 +264,23 @@ function ResultBox({
       <div className="result-box-head">
         <h3>{title}</h3>
       </div>
-      <div>{children}</div>
+      <p className="message-body">{body}</p>
     </section>
   );
+}
+
+function formatKey(key: string) {
+  return key
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/_/g, " ")
+    .replace(/^./, (char) => char.toUpperCase());
+}
+
+function formatValue(value: unknown) {
+  if (typeof value === "string") return value || "-";
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  if (value == null) return "-";
+  return JSON.stringify(value);
 }
 
 function Field({
