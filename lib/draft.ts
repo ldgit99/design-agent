@@ -36,145 +36,155 @@ export async function generateLessonDraft(input: LessonDraftInput): Promise<Less
     return buildFallbackDraft(normalized);
   }
 
-  try {
-    const response = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: process.env.OPENAI_MODEL || "gpt-5.4",
-        input: [
-          {
-            role: "system",
-            content: [
-              {
-                type: "input_text",
-                text:
-                  "You are a teacher-centered lesson design orchestrator. Return only valid JSON. Keep teacher approval explicit, bound AI usage carefully, align activities with rubric dimensions, and preserve selected card metadata.",
-              },
-            ],
-          },
-          {
-            role: "user",
-            content: [
-              {
-                type: "input_text",
-                text: JSON.stringify(
-                  {
-                    teacherInput: normalized,
-                    availableCards: cards,
-                    requiredKeys: [
-                      "intentProfile",
-                      "selectedCards",
-                      "scenarioBlocks",
-                      "rubricDimensions",
-                      "reviewItems",
-                    ],
-                  },
-                  null,
-                  2,
-                ),
-              },
-            ],
-          },
-        ],
-        text: {
-          format: {
-            type: "json_schema",
-            name: "lesson_draft",
-            strict: true,
-            schema: {
-              type: "object",
-              additionalProperties: false,
-              properties: {
-                intentProfile: {
-                  type: "object",
-                  additionalProperties: true,
+  const candidateModels = [
+    process.env.OPENAI_MODEL || "gpt-5.4",
+    "gpt-4.1",
+    "gpt-4.1-mini",
+  ].filter((value, index, array) => array.indexOf(value) === index);
+
+  for (const model of candidateModels) {
+    try {
+      const response = await fetch("https://api.openai.com/v1/responses", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model,
+          input: [
+            {
+              role: "system",
+              content: [
+                {
+                  type: "input_text",
+                  text:
+                    "You are a teacher-centered lesson design orchestrator. Return only valid JSON. Keep teacher approval explicit, bound AI usage carefully, align activities with rubric dimensions, and preserve selected card metadata.",
                 },
-                selectedCards: {
-                  type: "array",
-                  items: {
+              ],
+            },
+            {
+              role: "user",
+              content: [
+                {
+                  type: "input_text",
+                  text: JSON.stringify(
+                    {
+                      teacherInput: normalized,
+                      availableCards: cards,
+                      requiredKeys: [
+                        "intentProfile",
+                        "selectedCards",
+                        "scenarioBlocks",
+                        "rubricDimensions",
+                        "reviewItems",
+                      ],
+                    },
+                    null,
+                    2,
+                  ),
+                },
+              ],
+            },
+          ],
+          text: {
+            format: {
+              type: "json_schema",
+              name: "lesson_draft",
+              strict: true,
+              schema: {
+                type: "object",
+                additionalProperties: false,
+                properties: {
+                  intentProfile: {
                     type: "object",
                     additionalProperties: true,
                   },
-                },
-                scenarioBlocks: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    additionalProperties: false,
-                    properties: {
-                      phase: { type: "string" },
-                      durationMinutes: { type: "integer" },
-                      teacherActions: { type: "string" },
-                      studentActions: { type: "string" },
-                      aiActions: { type: "string" },
+                  selectedCards: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      additionalProperties: true,
                     },
-                    required: [
-                      "phase",
-                      "durationMinutes",
-                      "teacherActions",
-                      "studentActions",
-                      "aiActions",
-                    ],
+                  },
+                  scenarioBlocks: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      additionalProperties: false,
+                      properties: {
+                        phase: { type: "string" },
+                        durationMinutes: { type: "integer" },
+                        teacherActions: { type: "string" },
+                        studentActions: { type: "string" },
+                        aiActions: { type: "string" },
+                      },
+                      required: [
+                        "phase",
+                        "durationMinutes",
+                        "teacherActions",
+                        "studentActions",
+                        "aiActions",
+                      ],
+                    },
+                  },
+                  rubricDimensions: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      additionalProperties: false,
+                      properties: {
+                        name: { type: "string" },
+                        descriptor: { type: "string" },
+                      },
+                      required: ["name", "descriptor"],
+                    },
+                  },
+                  reviewItems: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      additionalProperties: false,
+                      properties: {
+                        reviewer: { type: "string" },
+                        summary: { type: "string" },
+                      },
+                      required: ["reviewer", "summary"],
+                    },
                   },
                 },
-                rubricDimensions: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    additionalProperties: false,
-                    properties: {
-                      name: { type: "string" },
-                      descriptor: { type: "string" },
-                    },
-                    required: ["name", "descriptor"],
-                  },
-                },
-                reviewItems: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    additionalProperties: false,
-                    properties: {
-                      reviewer: { type: "string" },
-                      summary: { type: "string" },
-                    },
-                    required: ["reviewer", "summary"],
-                  },
-                },
+                required: [
+                  "intentProfile",
+                  "selectedCards",
+                  "scenarioBlocks",
+                  "rubricDimensions",
+                  "reviewItems",
+                ],
               },
-              required: [
-                "intentProfile",
-                "selectedCards",
-                "scenarioBlocks",
-                "rubricDimensions",
-                "reviewItems",
-              ],
             },
           },
-        },
-      }),
-    });
+        }),
+      });
 
-    if (!response.ok) {
-      return buildFallbackDraft(normalized);
+      if (!response.ok) {
+        continue;
+      }
+
+      const payload = (await response.json()) as {
+        output_text?: string;
+      };
+
+      if (!payload.output_text) {
+        continue;
+      }
+
+      return JSON.parse(payload.output_text) as LessonDraftOutput;
+    } catch {
+      continue;
     }
-
-    const payload = (await response.json()) as {
-      output_text?: string;
-    };
-
-    if (!payload.output_text) {
-      return buildFallbackDraft(normalized);
-    }
-
-    return JSON.parse(payload.output_text) as LessonDraftOutput;
-  } catch {
-    return buildFallbackDraft(normalized);
   }
+
+  return buildFallbackDraft(normalized);
 }
 
 function normalizeInput(input: LessonDraftInput): LessonDraftInput {
