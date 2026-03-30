@@ -2,6 +2,7 @@
 
 import type { FormEvent } from "react";
 import { useMemo, useState } from "react";
+import { ResultStudio } from "@/components/result-studio";
 import {
   createDraftPlan,
   type LessonDraftRequest,
@@ -18,9 +19,9 @@ const defaultForm: LessonDraftRequest = {
 };
 
 const quickNotes = [
-  "교사의 최종 승인권을 유지합니다.",
-  "추천 카드와 검토 의견을 함께 보여줍니다.",
-  "AI 활용은 목표를 보조하는 범위로 제한합니다.",
+  "교사가 최종 판단권을 유지합니다.",
+  "추천 카드와 검토 의견은 함께 보여줍니다.",
+  "AI 사용은 수업 목표를 보조하는 범위로 제한합니다.",
 ];
 
 export function TeacherInputForm() {
@@ -59,8 +60,8 @@ export function TeacherInputForm() {
           </div>
           <h2>수업 설계 입력</h2>
           <p className="panel-text">
-            목표, 학습자 수준, AI 활용 범위, 제약 조건을 입력하면 서버가 구조화된 초안과
-            검토 결과를 반환합니다.
+            목표, 학습자 수준, AI 사용 범위, 제약 조건을 입력하면 서비스가 구조화된 초안과 검토
+            결과를 반환합니다.
           </p>
           <ul className="check-list">
             {quickNotes.map((note) => (
@@ -104,7 +105,7 @@ export function TeacherInputForm() {
               label="교사 프롬프트"
               value={form.teacherPrompt}
               onChange={(value) => setForm((prev) => ({ ...prev, teacherPrompt: value }))}
-              placeholder="학생들이 기사문의 핵심 내용을 파악하고, 생성형 AI가 만든 요약과 직접 쓴 요약을 비교해 차이를 설명하도록 하는 수업을 만들고 싶습니다. AI는 초안 비교용으로만 사용하고 최종 판단은 학생이 하게 하고 싶습니다."
+              placeholder="학생들이 기사문의 핵심 내용을 파악하고, 생성형 AI가 만든 요약과 직접 만든 요약을 비교하며 차이를 설명하도록 하는 수업을 만들고 싶습니다. AI는 비교 초안 용도로만 사용하고 최종 판단은 학생이 하도록 설계해 주세요."
             />
             <TextArea
               label="제약 조건"
@@ -134,8 +135,8 @@ export function TeacherInputForm() {
           </div>
           <h2>응답 보드</h2>
           <p className="panel-text">
-            결과를 읽기 쉬운 카드 레이아웃으로 나눠 보여줍니다. 다음 단계에서는 여기서 직접
-            카드 교체와 시나리오 수정을 지원할 수 있습니다.
+            결과를 읽기 쉬운 카드 레이아웃으로 나눠 보여줍니다. 이어서 아래 스튜디오에서 추천
+            카드와 검토 카드를 직접 옮기며 설계를 조정할 수 있습니다.
           </p>
 
           {error ? <MessageBox title="오류" tone="warn" body={error} /> : null}
@@ -234,12 +235,14 @@ export function TeacherInputForm() {
                   ))}
                 </div>
               </section>
+
+              <ResultStudio result={result} />
             </div>
           ) : (
             <div className="empty-state">
               <p className="empty-title">아직 생성된 초안이 없습니다.</p>
               <p className="empty-text">
-                좌측 입력 패널에서 수업 주제와 제약을 입력하면, 여기서 구조화된 결과를 바로
+                왼쪽 입력 패널에서 수업 주제와 제약을 입력하면, 여기에서 구조화된 결과를 바로
                 확인할 수 있습니다.
               </p>
             </div>

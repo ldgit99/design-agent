@@ -1,9 +1,22 @@
+import { ActivityBoard } from "@/components/activity-board";
 import { TeacherInputForm } from "@/components/teacher-input-form";
 
 const signals = [
-  { label: "Flow", value: "카드 기반 시나리오", note: "도입 · 전개 · 정리 흐름 자동 구성" },
-  { label: "Review", value: "교육학 검토", note: "Pedagogy · Safety 이중 점검" },
-  { label: "Deploy", value: "GitHub + Vercel", note: "실험 브랜치와 운영 배포 분리" },
+  {
+    label: "Flow",
+    value: "카드 기반 시나리오",
+    note: "도입, 전개, 정리 흐름을 한 화면에서 설계",
+  },
+  {
+    label: "Review",
+    value: "교육학 검토",
+    note: "Pedagogy와 Safety 관점을 함께 확인",
+  },
+  {
+    label: "Studio",
+    value: "드래그 앤 드롭",
+    note: "활동과 설계 카드를 직접 재배치하며 초안을 조정",
+  },
 ];
 
 export default function HomePage() {
@@ -12,10 +25,11 @@ export default function HomePage() {
       <section className="hero">
         <div className="hero-copy">
           <p className="eyebrow">Human-AI Orchestration Studio</p>
-          <h1 className="hero-title">교사 중심 AI 수업 설계 대시보드</h1>
+          <h1 className="hero-title">교사 주도 AI 수업 설계 대시보드</h1>
           <p className="hero-text">
-            수업 목표와 제약 조건을 구조화하고, 카드 추천, 시나리오 생성, 루브릭 설계,
-            검토 의견까지 한 화면에서 연결하는 설계 워크스페이스입니다.
+            수업 목표와 제약 조건을 구조화하면 추천 카드, 시나리오, 루브릭, 검토 의견까지
+            연결해서 보여주는 설계 워크스페이스입니다. 아래 보드에서 학습 활동과 설계 카드를
+            직접 옮기며 차시 흐름을 빠르게 조정할 수 있습니다.
           </p>
         </div>
         <div className="hero-board">
@@ -40,29 +54,30 @@ export default function HomePage() {
           <p className="overview-kicker">Current focus</p>
           <h2>Lesson Drafting Workflow</h2>
           <p>
-            교사 입력을 시작점으로 삼고, Intent Parser, Card Curator, Scenario Composer,
-            Reviewer를 거쳐 최종 승인안까지 이어지는 흐름을 기준으로 화면을 구성합니다.
+            교사 입력에서 시작해 카드 추천, 시나리오 생성, 루브릭 설계, 검토 피드백까지 한
+            흐름으로 연결합니다.
           </p>
         </article>
         <article className="overview-panel">
           <p className="overview-kicker">Reference direction</p>
-          <h2>프로젝트 보드형 정보 구조</h2>
+          <h2>프로젝트 보드형 구성</h2>
           <p>
-            큰 헤드라인, 밀도 있는 상태 카드, 좌우 작업 분할, 결과 패널의 계층적 그룹핑을
-            중심으로 재구성했습니다.
+            상단 요약 보드와 좌우 분할 작업 공간, 그리고 드래그 앤 드롭 스튜디오를 조합해 설계
+            과정이 바로 보이도록 정리했습니다.
           </p>
         </article>
         <article className="overview-panel">
-          <p className="overview-kicker">Output mode</p>
-          <h2>구조화된 결과 뷰</h2>
+          <p className="overview-kicker">Interaction mode</p>
+          <h2>직접 배치하는 설계 화면</h2>
           <p>
-            결과를 raw JSON 한 덩어리로 보지 않고, 의도 프로필, 카드, 시나리오, 루브릭,
-            검토 의견으로 분리해 읽기 쉽게 배치합니다.
+            결과를 읽는 데서 끝나지 않고, 활동 카드와 설계 카드를 직접 옮기며 수업 흐름을
+            손으로 조정할 수 있습니다.
           </p>
         </article>
       </section>
 
       <TeacherInputForm />
+      <ActivityBoard />
     </main>
   );
 }
